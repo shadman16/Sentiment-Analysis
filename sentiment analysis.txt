@@ -1,0 +1,54 @@
+punctuation_chars = ["'", '"', ",", ".", "!", ":", ";", '#', '@']
+positive_words = []
+with open("positive_words.txt") as pos_f:
+    for lin in pos_f:
+        if lin[0] != ';' and lin[0] != '\n':
+            positive_words.append(lin.strip())
+
+
+negative_words = []
+with open("negative_words.txt") as pos_f:
+    for lin in pos_f:
+        if lin[0] != ';' and lin[0] != '\n':
+            negative_words.append(lin.strip())
+
+def get_pos(par):
+    lst=par.split()
+    count=0
+    for i in lst:
+        if strip_punctuation(i.lower()) in positive_words:
+            count+=1
+    return count    
+
+# lists of words to use
+def strip_punctuation(s):
+    st=""
+    for char in s:
+        if char in punctuation_chars:
+            continue
+        else:
+            st=st+char
+    return st    
+def get_neg(par):
+    lst=par.split()
+    count=0
+    for i in lst:
+        if strip_punctuation(i.lower()) in negative_words:
+            count+=1
+    return count   
+ref=open("project_twitter_data.csv","r")
+lines=ref.readlines()
+ref1=open("resulting_data.csv","w")
+ref1.write("{}, {}, {}, {}, {}".format("Number of Retweets" ,"Number of Replies","Positive Score" ,"Negative Score","Net Score"))
+ref1.write("\n")
+for line in lines[1:]:
+    val=line.strip().split(",")
+    ps=get_pos(val[0])
+    ns=get_neg(val[0])
+    net_score=ps-ns
+    row="{},{},{},{},{}".format(val[1],val[2],ps,ns,net_score)
+    ref1.write(row)
+    ref1.write("\n")
+    
+ref1.close()
+ref.close()
